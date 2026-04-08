@@ -119,4 +119,6 @@ This mean when the default gateway - the router receives a packet, based on the 
 
 **Answer: 1778,2289,8088**
 
-`Flag: HTB{Y0u'v3_m4st3r3d_0p3nWRT_d4t4_3xtr4ct10n!!}`
+![](16.png)
+
+`Flag: HTB{HTB{Y0u'v3_m4st3r3d_0p3nWRT_d4t4_3xtr4ct10n_4nd_c0nf1g!!}}`
