@@ -456,7 +456,7 @@ We need to turn it into bytes with `xxd` so that the script can happily handle, 
 
 Got the flag! (the author is a Vietnamese???)
 
-## Summerize
+## Summarize
 
 Here is the re-contructed attack chain:
 
