@@ -226,6 +226,6 @@ Nah, the author is a wibu ??? What's more, the original file name is `MY-BELOVED
 
 `Flag: SNI{intr0_t0_df1r_and_th1s_g1rl_is_w4y_b3tter_than_Chiruzu}
 
-## Afterthough
+## Afterthought
 
 I have hardly anything to comment for this task, the attack chain is not clear, we don't know why the machine is infected, and the ransomware is not so realistic as well, I think most ransomware will encrypt in-place, rather than create a new folder and put encrypted files in, which increase disk write and possibly trigger AV.
