@@ -479,5 +479,5 @@ The first operator response delivers three tasks simultaneously:
 
 The implant runs a jittered beacon loop (13 seconds ± 20% based on SLEEP98001 13s), GETting tasks from randomly rotated URLs like /Kettie/Emmie/Anni?Theda=Merrilee?c. Commands are dispatched through the Core module's Main() method. Output is gzip compressed by Core, then further gzip compressed, AES-256-CBC encrypted and disguised as PNG image uploads in POST requests.
 
-``Flag: HTB{h0w_c4N_y0U_s3e_p05H_c0mM4nd?}`
+`Flag: HTB{h0w_c4N_y0U_s3e_p05H_c0mM4nd?}`
 
