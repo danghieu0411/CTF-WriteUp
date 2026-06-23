@@ -307,11 +307,11 @@ Even though filenames are clear, reading file contents from `/mnt/data` yields g
 2. **Derive Key (HKDF):** Derive the block-decryption key using `ce_key.bin` and the file nonce via `HKDF-SHA512-Expand`.
 
 $$
-\text{PRK} = \text{HMAC-SHA512}(\text{salt}=\emptyset, \text{key}=\text{ce\_key})
+\text{PRK} = \text{HMAC-SHA512}(\text{salt}=\emptyset, \text{key}=\text{key}_{\text{CE}})
 $$
 
 $$
-\text{File Key} = \text{HKDF-Expand}(\text{PRK}, \text{info}=\text{b"fscrypt\textbackslash x00\textbackslash x02"} + \text{nonce}, \text{length}=64)
+\text{File Key} = \text{HKDF-Expand}(\text{PRK}, \text{info}=\text{b"fscrypt"} \mathbin{\Vert} \text{b"} \backslash \text{x00} \backslash \text{x02"} \mathbin{\Vert} \text{nonce}, \text{length}=64)
 $$
 
 3. **Parse Extents:** Use `debugfs stat` on `a_decrypted.raw` to fetch the file's logical-to-physical block mapping.
@@ -320,7 +320,7 @@ $$
    * Decrypt the 4096-byte block using AES-256-XTS. The tweak (IV) is the 16-byte padded **logical** block index:
 
 $$
-\text{Tweak} = \text{logical\_block\_index (8 bytes, little-endian)} \mathbin{\Vert} \text{b"\textbackslash x00"} \times 8
+\text{Tweak} = \text{logical-block-index (8 bytes, little-endian)} \mathbin{\Vert} \text{b"} \backslash \text{x00"} \times 8
 $$
 
 5. **Reassemble & Truncate:** Concatenate blocks and truncate to the exact file size.
