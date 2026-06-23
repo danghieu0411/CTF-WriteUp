@@ -18,12 +18,10 @@ The fact that it's encrypted using AES-GCM is a luxury to us, as GCM uses authen
 
 ---
 
-> [!NOTE]
 > ### Foundational Knowledge: Virtual Hard Drives (QCOW2)
 > * **The Concept:** `a` and `b` are QCOW2 (QEMU Copy-On-Write) files.
 > * **The Intuition:** Think of a QCOW2 file as a physical hard drive packed into a single file on your host machine. To look inside it, we have to "plug it in" to our operating system as a virtual block device (using `qemu-nbd`, which stands for Network Block Device).
 
-> [!NOTE]
 > ### Foundational Knowledge: Android's Two Layers of Encryption
 > Modern Android devices secure user data by using two separate layers of encryption:
 > #### Layer 1: Metadata Encryption (`dm-crypt`)
@@ -35,13 +33,11 @@ The fact that it's encrypted using AES-GCM is a luxury to us, as GCM uses authen
 >   * **DE (Device Encrypted):** Accessible as soon as the device boots.
 >   * **CE (Credential Encrypted):** Only accessible after the user enters their lock screen credentials (PIN/pattern/password).
 
-> [!NOTE]
 > ### Foundational Knowledge: Key Wrapping & Software Keymaster
 > * **The Concept:** You cannot store the keys that decrypt your drive in plain text on the drive itself. They must be encrypted ("wrapped") by another key.
 > * **The Intuition:** On a physical phone, the wrapping key is burned into a hardware security chip (the TEE or Secure Enclave). On an Android emulator, there is no hardware chip, so it simulates this using Software Keymaster, storing the master wrapping key in cleartext inside a key blob.
 > * **Additionally,** because this emulator did not have a lock screen password, it used `"nopassword"` stretching, meaning we don't have to brute-force a PIN.
 
-> [!NOTE]
 > ### Foundational Knowledge: Cryptographic Primitives (Math Intuition)
 > You will encounter three cryptographic algorithms:
 > * **AES-GCM (Authenticated Encryption):** Used to wrap/unwrap the encryption keys.
@@ -104,7 +100,6 @@ Now that we have the decrypted `datakey.bin`, let's start decrypting `a`. But fi
 
 ---
 
-> [!NOTE]
 > ### Foundational Knowledge: Decrypting AES-XTS with `iv_large_sectors`
 > #### Why AES-XTS?
 > AES-XTS is the standard algorithm for disk encryption. It takes a 64-byte key (which it splits into two 32-byte keys internally) and decrypts the disk block-by-block.
@@ -214,7 +209,6 @@ decrypt_key("unenc_keymaster_key_blob", "unenc_encrypted_key", "unenc")
 
 ## Moving to Kali VM: Loading FBE Keys and Directory Decryption
 
-> [!NOTE]
 > **Why Transfer to Kali?**
 > The default host Linux environment (e.g. WSL) often lacks loop device keyring propagation or lacks the `CONFIG_FS_ENCRYPTION` kernel configuration flags required to load fscrypt keys into loop-mounted ext4 volumes. Moving the files to a native **Kali VM** ensures the kernel supports these filesystem-level decryption tasks out-of-the-box, saving significant setup pain.
 
@@ -303,7 +297,6 @@ Now we trace the directory structure and identify the target inodes:
 
 Even though filenames are clear, reading file contents from `/mnt/data` yields garbage. This is because **file data extents bypass the metadata encryption layer** and are written directly as raw FBE ciphertext to the disk (`a.raw`). Reading through the mount decrypts them a second time (double-decrypted noise).
 
-> [!IMPORTANT]
 > The correct path to extract file contents is to read the physical block extents raw from `a.raw` and FBE-decrypt them in user-space.
 
 ---
@@ -311,13 +304,25 @@ Even though filenames are clear, reading file contents from `/mnt/data` yields g
 ## File-Based Encryption Decryption Schema
 
 1. **Get File Nonce:** Retrieve the file's 16-byte nonce from bytes 24–39 (`data[24:40]`) of the inode's 40-byte `c` extended attribute (the `fscrypt v2` context structure).
-2. **Derive Key (HKDF):** Derive the block-decryption key using `ce_key.bin` and the file nonce via `HKDF-SHA512-Expand`:
-   $$\text{PRK} = \text{HMAC-SHA512}(\text{salt}=\emptyset, \text{key}=\text{ce\_key})$$
-   $$\text{File Key} = \text{HKDF-Expand}(\text{PRK}, \text{info}=\text{b"fscrypt\x00\x02"} + \text{nonce}, \text{length}=64)$$
+2. **Derive Key (HKDF):** Derive the block-decryption key using `ce_key.bin` and the file nonce via `HKDF-SHA512-Expand`.
+
+$$
+\text{PRK} = \text{HMAC-SHA512}(\text{salt}=\emptyset, \text{key}=\text{ce\_key})
+$$
+
+$$
+\text{File Key} = \text{HKDF-Expand}(\text{PRK}, \text{info}=\text{b"fscrypt\textbackslash x00\textbackslash x02"} + \text{nonce}, \text{length}=64)
+$$
+
 3. **Parse Extents:** Use `debugfs stat` on `a_decrypted.raw` to fetch the file's logical-to-physical block mapping.
 4. **Decrypt Block-by-Block:** For each mapped block:
    * Seek to the physical block offset in the raw encrypted disk image `a.raw`.
-   * Decrypt the 4096-byte block using AES-256-XTS. The tweak (IV) is the 16-byte padded **logical** block index: `logical_blk.to_bytes(8, 'little') + b'\x00' * 8`.
+   * Decrypt the 4096-byte block using AES-256-XTS. The tweak (IV) is the 16-byte padded **logical** block index:
+
+$$
+\text{Tweak} = \text{logical\_block\_index (8 bytes, little-endian)} \mathbin{\Vert} \text{b"\textbackslash x00"} \times 8
+$$
+
 5. **Reassemble & Truncate:** Concatenate blocks and truncate to the exact file size.
 
 
