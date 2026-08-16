@@ -1,5 +1,7 @@
 # Enduring Echo
 
+![](logo.png)
+
 ## Sherlock Scenario
 
 LeStrade passes a disk image to Holmes. It's one of the identified breach points, now showing abnormal CPU activity and anomalies in process logs.
