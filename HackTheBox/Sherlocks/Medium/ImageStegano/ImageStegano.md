@@ -16,7 +16,7 @@ Alright, I have been always thought of steganography as one of the most meaningl
 
 Let's return to our challenge, just use exiftool:
 
-1[](1.png)
+![](1.png)
 
 `Answer: Hewlett-Packard`
 
