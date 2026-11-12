@@ -1,0 +1,73 @@
+Sherlock Scenario
+Our SIEM alerted that AV blocked malware from running on an employee's machine. For further investigation, the incident response team quickly acquired an image of that machine. To find out how this malware got on the machine, their task is to find the entry point of the attack and trace the attacker.
+
+Task 0
+
+Hint
+What is the name of the attacker?
+
+abdlhameed
+
+Submit Task
+Task 1
+
+Hint
+What application is used for messaging?
+
+discord
+
+Submit Task
+Task 2
+
+Hint
+What is the attacker's username on the application?
+
+abdo8azy
+
+Submit Task
+Task 3
+
+Hint
+When did an attacker send the first message to the victim on this application?Answer Format: YYYY-MM-DDTHH:MM:SS
+
+2023-11-11T22:15:11
+
+Submit Task
+Task 4
+
+Hint
+The attacker has sent a server invitation URL to the victim, what is the full URL?
+
+https://discord.gg/ajHEwPq3
+
+Submit Task
+Task 5
+
+Hint
+How many people were on the Discord server?
+
+4
+
+Submit Task
+Task 6
+
+Hint
+What is the MD5 hash of the attachment file that the victim sent to the attacker?
+
+4243e8b9c73d6cb5db5b64d64fcd4347
+
+Submit Task
+Task 7
+
+Hint
+What is the victim’s country?
+
+France
+
+Submit Task
+Task 8
+
+Hint
+What is the URL of the attachment that the attacker sent to the victim?
+
+https://files.doxbin.gg/8tgwESMK.exe
